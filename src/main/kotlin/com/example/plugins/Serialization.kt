@@ -6,14 +6,13 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+/**
+ * Set up serialization
+ * @author Justin Forseth
+ */
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         gson {
-            }
-    }
-    routing {
-        get("/json/gson") {
-                call.respond(mapOf("hello" to "world"))
             }
     }
 }

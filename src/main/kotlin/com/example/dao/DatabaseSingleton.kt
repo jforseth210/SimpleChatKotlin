@@ -1,22 +1,28 @@
 package com.example.dao
 
-//import com.example.models.*
+//import com.example.dao.models.*
 import Users
-import com.example.models.ConversationUsers
-import com.example.models.Conversations
-import com.example.models.Messages
-import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.*
-import org.jetbrains.exposed.sql.transactions.experimental.*
-import io.ktor.server.application.ApplicationEnvironment
+import com.example.dao.models.ConversationUsers
+import com.example.dao.models.Conversations
+import com.example.dao.models.Messages
+import io.ktor.server.application.*
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
+
+/**
+ * Set up database connection
+ * @author Justin Forseth
+ */
 object DatabaseSingleton {
-  fun init(environment:ApplicationEnvironment) {
+  fun init(environment: ApplicationEnvironment) {
     val driverClassName = "org.mariadb.jdbc.Driver"
     val jdbcURL = environment.config.property("db.jdbcURL").getString()
     val username = environment.config.property("db.username").getString()
     val password = environment.config.property("db.password").getString()
-    val database = Database.connect(jdbcURL, driverClassName, user=username, password =password)
+    val database = Database.connect(jdbcURL, driverClassName, user = username, password = password)
     transaction(database) {
       SchemaUtils.create(Users)
       SchemaUtils.create(Messages)
