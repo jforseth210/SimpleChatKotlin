@@ -6,7 +6,7 @@ Git, Python, and NPM are required to install the server.
 Download the project from github
 ``` bash
 git clone https://github.com/jforseth210/SimpleChatKotlin
-cd SimpleChat
+cd SimpleChatKotlin
 ```
 
 Build the vue project
