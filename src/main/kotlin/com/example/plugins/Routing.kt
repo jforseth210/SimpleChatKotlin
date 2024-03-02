@@ -35,11 +35,10 @@ fun Application.configureRouting() {
                         call.respond(listOf<Conversation>())
                         return@dbQuery
                     }
-                    var user: User? = null
-                    user = User.find { Users.username eq username }.firstOrNull()
+                    var user = User.find { Users.username eq username }.firstOrNull()
 
                     if (user == null) return@dbQuery
-                    call.respond(user?.conversations?.map {
+                    call.respond(user.conversations.map {
                         SerializableConversation(
                             user = it.users.filter { it.username != username }[0].username,
                             id = it.id.value,
@@ -51,7 +50,7 @@ fun Application.configureRouting() {
                                 )
                             }
                         )
-                    } ?: listOf<Conversation>())
+                    })
                 }
             }
         }
