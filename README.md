@@ -6,7 +6,7 @@ Git, Python, and NPM are required to install the server.
 Download the project from github
 ``` bash
 git clone https://github.com/jforseth210/SimpleChatKotlin
-cd SimpleChat
+cd SimpleChatKotlin
 ```
 
 Build the vue project
@@ -17,7 +17,16 @@ npm run build
 cd ..
 ```
 
-Install python dependencies and run the server
+This project requires a MariaDB database (other databases may work by editing driverClassName in src/main/kotlin/com/example/dao/DatabaseSingleton.kt, but this is untested).
+
+The connection details can be specified in src/main/resources/application.conf
+```bash
+cd src/main/resources
+cp application.conf.example application.conf
+```
+Create a MariaDB database and user, and update jdbcUrl, username, and password accordingly.
+
+Run the server
 ```bash
 ./gradlew run
 ```
