@@ -34,3 +34,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+kls_database.db
+src/main/resources/application.conf
