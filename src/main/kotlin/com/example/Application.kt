@@ -2,6 +2,7 @@ package com.example
 
 import com.example.dao.DatabaseSingleton
 import com.example.plugins.configureSerialization
+import com.example.routes.configureApplicationRoutes
 import com.example.routes.configureAuthRoutes
 import io.ktor.server.application.*
 
@@ -16,4 +17,5 @@ fun Application.module() {
   configureSerialization()
   configureSecurity()
   configureAuthRoutes()
+  configureApplicationRoutes()
 }
