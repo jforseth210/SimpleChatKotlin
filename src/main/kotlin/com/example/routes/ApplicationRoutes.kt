@@ -1,5 +1,6 @@
 package com.example.routes
 
+import com.example.dao.DatabaseSingleton.dbQuery
 import com.example.dao.models.Conversation
 import com.example.getCurrentUserOr401
 import com.example.services.createConversation
@@ -30,35 +31,41 @@ fun Application.configureApplicationRoutes() {
     }
     authenticate("auth-session") {
       get("/conversations") {
-        val user = getCurrentUserOr401(call) ?: return@get
-        call.respond(getSerializedConversations(user))
+        dbQuery {
+          val user = getCurrentUserOr401(call) ?: return@dbQuery
+          call.respond(getSerializedConversations(user))
+        }
       }
 
     }
     authenticate("auth-session") {
       post("/send-message") {
-        val messageForm = call.receive<MessageForm>()
-        val user = getCurrentUserOr401(call) ?: return@post
-        val conversation = Conversation.findById(messageForm.conversationId) ?: return@post
-        sendMessage(conversation, user, messageForm.message)
-        call.respond(SuccessResponse(true))
+        dbQuery {
+          val messageForm = call.receive<MessageForm>()
+          val user = getCurrentUserOr401(call) ?: return@dbQuery
+          val conversation = Conversation.findById(messageForm.conversationId) ?: return@dbQuery
+          sendMessage(conversation, user, messageForm.message)
+          call.respond(SuccessResponse(true))
+        }
       }
     }
     authenticate("auth-session") {
       post("/add-conversation") {
-        val currentUser = getCurrentUserOr401(call) ?: return@post
-        val conversationForm = call.receive<ConversationForm>()
-        val otherUser = getUser(conversationForm.user)
-        if (otherUser == null) {
-          call.respond(404)
-          return@post
+        dbQuery {
+          val currentUser = getCurrentUserOr401(call) ?: return@dbQuery
+          val conversationForm = call.receive<ConversationForm>()
+          val otherUser = getUser(conversationForm.user)
+          if (otherUser == null) {
+            call.respond(404)
+            return@dbQuery
+          }
+          if (currentUser == otherUser) {
+            call.respond(400)
+            return@dbQuery
+          }
+          val conversation = createConversation(listOf(currentUser, otherUser))
+          call.respond(ConversationCreationResponse(true, conversation.id.value))
         }
-        if (currentUser == otherUser) {
-          call.respond(400)
-          return@post
-        }
-        val conversation = createConversation(listOf(currentUser, otherUser))
-        call.respond(ConversationCreationResponse(true, conversation.id.value))
       }
     }
   }
